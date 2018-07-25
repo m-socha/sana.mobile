@@ -33,6 +33,7 @@
     <string name="button_main_select_patient">Select Patient</string>
     <string name="button_main_training_mode">Practice</string>
     <string name="button_configure">Configure</string>
+    <string name="button_manage_protocols">Manage Protocols</string>
 
     <!--  General Phrases -->
     <string name="general_ok">Okay</string>
