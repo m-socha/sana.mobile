@@ -2,6 +2,7 @@
 package org.sana.android.activity;
 
 import org.sana.R;
+import org.sana.android.activity.protocol_builder.ProtocolBuilderAuthenticationActivity;
 import org.sana.android.activity.settings.BasicSettings;
 import org.sana.android.app.Locales;
 import org.sana.android.content.Intents;
@@ -187,6 +188,7 @@ public class AuthenticationActivity extends BaseActivity {
         mInputPassword.setEnabled(false);
         ((Button) findViewById(R.id.btn_login)).setEnabled(false);
         ((Button) findViewById(R.id.btn_configure)).setEnabled(false);
+        ((Button) findViewById(R.id.btn_manage_protocols)).setEnabled(false);
     }
 
     private void enableInput() {
@@ -194,6 +196,7 @@ public class AuthenticationActivity extends BaseActivity {
         mInputPassword.setEnabled(true);
         ((Button) findViewById(R.id.btn_login)).setEnabled(true);
         ((Button) findViewById(R.id.btn_configure)).setEnabled(true);
+        ((Button) findViewById(R.id.btn_manage_protocols)).setEnabled(true);
     }
 
     // Attempts a log-in
@@ -297,6 +300,10 @@ public class AuthenticationActivity extends BaseActivity {
             case R.id.btn_configure:
                 Intent configure = new Intent(this, BasicSettings.class);
                 startActivity(configure);
+                break;
+            case R.id.btn_manage_protocols:
+                Intent manageProtocols = new Intent(this, ProtocolBuilderAuthenticationActivity.class);
+                startActivity(manageProtocols);
                 break;
             default:
         }

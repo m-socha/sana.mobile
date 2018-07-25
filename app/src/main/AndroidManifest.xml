@@ -387,6 +387,11 @@
             </intent-filter>
         </receiver>
         -->
+
+        <!-- Protocol Builder section -->
+        <activity
+            android:name=".android.activity.protocol_builder.ProtocolBuilderAuthenticationActivity">
+        </activity>
     </application>
 
 </manifest>

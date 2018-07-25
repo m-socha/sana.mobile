@@ -96,6 +96,16 @@
             android:layout_gravity="center"
             android:padding="16dp" />
 
+        <Button
+            android:id="@+id/btn_manage_protocols"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_manage_protocols"
+            android:onClick="submit"
+            android:layout_margin="5dp"
+            android:minWidth="128dp"
+            android:layout_gravity="center"
+            android:padding="16dp" />
 
     </LinearLayout>
 
