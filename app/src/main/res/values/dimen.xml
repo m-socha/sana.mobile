@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Common -->
+    <dimen name="tiny_padding">4dp</dimen>
+    <dimen name="small_padding">8dp</dimen>
+    <dimen name="medium_padding">12dp</dimen>
+    <dimen name="large_padding">16dp</dimen>
+    <dimen name="huge_padding">32dp</dimen>
+
     <!-- Main -->
     <dimen name="btn_main_width">120dp</dimen>
 
     <!-- Authentication -->
     <dimen name="auth_input_width">270dp</dimen>
+
+    <!-- Protocol Builder -->
+    <dimen name="pb_auth_logo_dimen">64dp</dimen>
 </resources>

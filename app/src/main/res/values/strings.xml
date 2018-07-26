@@ -250,4 +250,7 @@
     <string name="setting_upload_foreground">Notify upload</string>
     <string name="prompt_default">Use default value</string>
 
+    <!-- Protocol Builder String -->
+    <string name="pb_label">Sana Protocol Builder</string>
+
 </resources>
