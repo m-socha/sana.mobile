@@ -392,6 +392,9 @@
         <activity
             android:name=".android.activity.protocol_builder.ProtocolBuilderAuthenticationActivity">
         </activity>
+        <activity
+            android:name=".android.activity.protocol_builder.ProtocolListActivity">
+        </activity>
     </application>
 
 </manifest>

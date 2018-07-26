@@ -252,5 +252,8 @@
 
     <!-- Protocol Builder String -->
     <string name="pb_label">Sana Protocol Builder</string>
+    <string name="pb_select_protocols_title">Select Protocols</string>
+    <string name="pb_select_protocols_button">Select</string>
+    <string name="pb_last_modified">Last Modified: %1$s</string>
 
 </resources>

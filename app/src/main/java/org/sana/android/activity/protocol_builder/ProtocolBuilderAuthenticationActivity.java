@@ -1,5 +1,6 @@
 package org.sana.android.activity.protocol_builder;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -40,6 +41,9 @@ public class ProtocolBuilderAuthenticationActivity extends BaseActivity {
         String password = mInputPassword.getText().toString();
 
         // TODO: Implement login
+
+        Intent protocolList = new Intent(this, ProtocolListActivity.class);
+        startActivity(protocolList);
     }
 
     protected boolean validUsernameAndPassword(String username, String password) {
