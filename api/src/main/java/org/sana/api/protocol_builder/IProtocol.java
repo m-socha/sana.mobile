@@ -1,4 +1,6 @@
-package org.sana.api;
+package org.sana.api.protocol_builder;
+
+import org.sana.api.IModel;
 
 import java.util.Date;
 

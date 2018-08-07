@@ -12,8 +12,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.sana.R;
-import org.sana.api.IProtocol;
-import org.sana.core.Protocol;
+import org.sana.api.protocol_builder.IProtocol;
+import org.sana.core.protocol_builder.Protocol;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

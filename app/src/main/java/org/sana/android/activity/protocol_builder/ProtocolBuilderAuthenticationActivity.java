@@ -3,12 +3,14 @@ package org.sana.android.activity.protocol_builder;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 import org.sana.R;
 import org.sana.android.activity.BaseActivity;
+import org.sana.android.service.protocol_builder.ProtocolBuilderAuthenticationService;
 
 /**
  * Activity for authenticating with protocol builder.
@@ -19,6 +21,8 @@ public class ProtocolBuilderAuthenticationActivity extends BaseActivity {
     private EditText mInputPassword;
 
     private Button mButtonLogin;
+
+    ProtocolBuilderAuthenticationService mAuthenticationService = new ProtocolBuilderAuthenticationService();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,14 +43,25 @@ public class ProtocolBuilderAuthenticationActivity extends BaseActivity {
     private void logIn() {
         String username = mInputUsername.getText().toString().trim();
         String password = mInputPassword.getText().toString();
+        Log.d("Login", "LoginAttempt");
 
-        // TODO: Implement login
+        if (validUsernameAndPassword(username, password)) {
+            mAuthenticationService.requestService(username, password, new ProtocolBuilderAuthenticationService.Callback() {
+                @Override
+                public void onSuccess(String authToken) {
+                    Log.d("Login", "LoginWin");
+                    startProtocolListActivity();
+                }
+            });
+        }
+    }
 
+    private void startProtocolListActivity() {
         Intent protocolList = new Intent(this, ProtocolListActivity.class);
         startActivity(protocolList);
     }
 
-    protected boolean validUsernameAndPassword(String username, String password) {
+    private boolean validUsernameAndPassword(String username, String password) {
         return !TextUtils.isEmpty(username) && !TextUtils.isEmpty(password);
     }
 
