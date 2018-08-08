@@ -3,6 +3,7 @@ package org.sana.android.activity.protocol_builder;
 import android.app.ListActivity;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,41 +13,33 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.sana.R;
-import org.sana.api.protocol_builder.IProtocol;
-import org.sana.core.protocol_builder.Protocol;
+import org.sana.android.service.protocol_builder.ProtocolBuilderProcedureService;
+import org.sana.core.protocol_builder.Procedure;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class ProtocolListActivity extends ListActivity {
+
+    private ProtocolBuilderProcedureService mProcedureService = new ProtocolBuilderProcedureService();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_protocol_list);
 
-        List<IProtocol> protocols = new ArrayList();
+        mProcedureService.requestService(new ProtocolBuilderProcedureService.Callback() {
+            @Override
+            public void onSuccess(List<Procedure> procedures) {
+                ProtocolListActivityAdapter adapter = new ProtocolListActivityAdapter(ProtocolListActivity.this, procedures);
+                setListAdapter(adapter);
+            }
 
-        Protocol p1 = new Protocol();
-        p1.setTitle("Sample Procedure 1");
-        p1.setDateModified(new Date(118, 6, 21));
-        protocols.add(p1);
-
-        Protocol p2 = new Protocol();
-        p2.setTitle("Sample Procedure 2");
-        p2.setDateModified(new Date(118, 6, 22));
-        p2.setSelected(true);
-        protocols.add(p2);
-
-        Protocol p3 = new Protocol();
-        p3.setTitle("Sample Procedure 3");
-        p3.setDateModified(new Date(118, 6, 22));
-        protocols.add(p3);
-
-        ProtocolListActivityAdapter adapter = new ProtocolListActivityAdapter(this, protocols);
-        setListAdapter(adapter);
+            @Override
+            public void onFailure() {
+                Log.d("ProtocolActivity", "Did not fetch protocols");
+            }
+        });
     }
 
     @Override
@@ -54,36 +47,36 @@ public class ProtocolListActivity extends ListActivity {
         super.onListItemClick(listView, view, position, id);
     }
 
-    private static class ProtocolListActivityAdapter extends ArrayAdapter<IProtocol> {
+    private static class ProtocolListActivityAdapter extends ArrayAdapter<Procedure> {
        private Context mContext;
-       private List<IProtocol> mProtocols;
+       private List<Procedure> mProcedures;
 
-       public ProtocolListActivityAdapter(Context context, List<IProtocol> protocols) {
-           super(context, 0, protocols);
+       public ProtocolListActivityAdapter(Context context, List<Procedure> procedures) {
+           super(context, 0, procedures);
            mContext = context;
-           mProtocols = protocols;
+           mProcedures = procedures;
        }
 
        @Override
-       public View getView(int position, View protocolItem, ViewGroup parent) {
-           if (protocolItem == null) {
-               protocolItem = LayoutInflater.from(mContext).inflate(R.layout.protocol_item, parent, false);
+       public View getView(int position, View procedureItem, ViewGroup parent) {
+           if (procedureItem == null) {
+               procedureItem = LayoutInflater.from(mContext).inflate(R.layout.protocol_item, parent, false);
            }
 
-           IProtocol protocol = mProtocols.get(position);
+           Procedure procedure = mProcedures.get(position);
 
-           TextView textTitle = (TextView) protocolItem.findViewById(R.id.text_title);
-           textTitle.setText(protocol.getTitle());
+           TextView textTitle = (TextView) procedureItem.findViewById(R.id.text_title);
+           textTitle.setText(procedure.title);
 
-           TextView textDate = (TextView) protocolItem.findViewById(R.id.text_date_modified);
-           String formattedDate = new SimpleDateFormat("MM/dd/yyyy").format(protocol.getDateModified());
+           TextView textDate = (TextView) procedureItem.findViewById(R.id.text_date_modified);
+           String formattedDate = new SimpleDateFormat("MM/dd/yyyy").format(procedure.last_modified);
            String lastModified = mContext.getString(R.string.pb_last_modified, formattedDate);
            textDate.setText(lastModified);
 
-           CheckBox checkBoxSelected = (CheckBox) protocolItem.findViewById(R.id.check_box_selected);
-           checkBoxSelected.setSelected(protocol.getSelected());
+           CheckBox checkBoxSelected = (CheckBox) procedureItem.findViewById(R.id.check_box_selected);
+           checkBoxSelected.setSelected(false);
 
-           return protocolItem;
+           return procedureItem;
         }
     }
 }

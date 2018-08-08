@@ -1,5 +1,7 @@
 package org.sana.android.service.protocol_builder;
 
+import com.google.gson.reflect.TypeToken;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpPost;
@@ -23,7 +25,7 @@ public class ProtocolBuilderAuthenticationService extends BaseProtocolBuilderSer
 
         try {
             HttpPost post = getPostRequest(postData);
-            executeRequest(post, AuthData.class, new BaseProtocolBuilderService.Callback<AuthData>() {
+            executeRequest(post, new TypeToken<AuthData>() {}.getType(), new BaseProtocolBuilderService.Callback<AuthData>() {
                 @Override
                 public void onSuccess(AuthData responseBody) {
                     if (responseBody.success) {

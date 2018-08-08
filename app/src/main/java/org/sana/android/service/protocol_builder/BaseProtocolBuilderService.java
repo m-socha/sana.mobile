@@ -3,6 +3,7 @@ package org.sana.android.service.protocol_builder;
 import android.os.AsyncTask;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -17,6 +18,7 @@ import org.sana.android.Constants;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.util.List;
 
 public abstract class BaseProtocolBuilderService {
@@ -29,10 +31,10 @@ public abstract class BaseProtocolBuilderService {
     }
 
     private class ProtocolBuilderHttpTask<T> extends AsyncTask<HttpUriRequest, Void, HttpResponse> {
-        private Class<T> mType;
+        private Type mType;
         private Callback<T> mCallback;
 
-        public ProtocolBuilderHttpTask(Class<T> type, Callback<T> callback) {
+        public ProtocolBuilderHttpTask(Type type, Callback<T> callback) {
             mType = type;
             mCallback = callback;
         }
@@ -41,7 +43,7 @@ public abstract class BaseProtocolBuilderService {
         protected HttpResponse doInBackground(HttpUriRequest... requests) {
             try {
                 HttpUriRequest request = requests[0];
-                HttpClient client = new DefaultHttpClient();//HttpClientFactory.getClient();
+                HttpClient client = new DefaultHttpClient();
                 HttpResponse response = client.execute(request);
                 return response;
             } catch (IOException e) {
@@ -56,7 +58,8 @@ public abstract class BaseProtocolBuilderService {
                     response.getStatusLine().getStatusCode() <= 299) {
                 try {
                     String responseString = EntityUtils.toString(response.getEntity());
-                    T responseBody = new Gson().fromJson(responseString, mType);
+                    Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
+                    T responseBody = gson.fromJson(responseString, mType);
                     mCallback.onSuccess(responseBody);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -68,7 +71,7 @@ public abstract class BaseProtocolBuilderService {
         }
     }
 
-    protected <T> void executeRequest(HttpUriRequest request, Class<T> type, Callback<T> callback) {
+    protected <T> void executeRequest(HttpUriRequest request, Type type, Callback<T> callback) {
         ProtocolBuilderHttpTask<T> task = new ProtocolBuilderHttpTask(type, callback);
         task.execute(request);
     }
@@ -76,11 +79,20 @@ public abstract class BaseProtocolBuilderService {
     protected final HttpPost getPostRequest(List<NameValuePair> postData) throws UnsupportedEncodingException {
         HttpPost httpPost = new HttpPost(getUri());
         httpPost.setEntity(new UrlEncodedFormEntity(postData, "UTF-8"));
+        if (ProtocolBuilderSessionService.getInstance().isSessionActive()) {
+            String token = ProtocolBuilderSessionService.getInstance().getSessionToken();
+            httpPost.setHeader("Authorization", "Token " + token);
+        }
         return httpPost;
     }
 
     protected final HttpGet getGetRequest() {
-        return new HttpGet(getUri());
+        HttpGet httpGet = new HttpGet(getUri());
+        if (ProtocolBuilderSessionService.getInstance().isSessionActive()) {
+            String token = ProtocolBuilderSessionService.getInstance().getSessionToken();
+            httpGet.setHeader("Authorization", "Token " + token);
+        }
+        return httpGet;
     }
 
     private final String getUri() {
