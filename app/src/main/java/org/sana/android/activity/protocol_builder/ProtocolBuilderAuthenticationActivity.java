@@ -11,6 +11,7 @@ import android.widget.EditText;
 import org.sana.R;
 import org.sana.android.activity.BaseActivity;
 import org.sana.android.service.protocol_builder.ProtocolBuilderAuthenticationService;
+import org.sana.android.service.protocol_builder.ProtocolBuilderSessionService;
 
 /**
  * Activity for authenticating with protocol builder.
@@ -49,6 +50,7 @@ public class ProtocolBuilderAuthenticationActivity extends BaseActivity {
                 @Override
                 public void onSuccess(String authToken) {
                     Log.d("AuthToken", authToken);
+                    ProtocolBuilderSessionService.getInstance().setSessionToken(authToken);
                     startProtocolListActivity();
                 }
 
