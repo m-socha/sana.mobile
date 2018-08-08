@@ -43,14 +43,18 @@ public class ProtocolBuilderAuthenticationActivity extends BaseActivity {
     private void logIn() {
         String username = mInputUsername.getText().toString().trim();
         String password = mInputPassword.getText().toString();
-        Log.d("Login", "LoginAttempt");
 
         if (validUsernameAndPassword(username, password)) {
             mAuthenticationService.requestService(username, password, new ProtocolBuilderAuthenticationService.Callback() {
                 @Override
                 public void onSuccess(String authToken) {
-                    Log.d("Login", "LoginWin");
+                    Log.d("AuthToken", authToken);
                     startProtocolListActivity();
+                }
+
+                @Override
+                public void onFailure() {
+                    Log.d("AuthFail", "AuthFail");
                 }
             });
         }

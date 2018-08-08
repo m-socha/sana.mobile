@@ -1,7 +1,5 @@
 package org.sana.android.service.protocol_builder;
 
-import android.util.Log;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpPost;
@@ -15,6 +13,7 @@ import java.util.List;
 public class ProtocolBuilderAuthenticationService extends BaseProtocolBuilderService {
     public interface Callback {
         void onSuccess(String authToken);
+        void onFailure();
     }
 
     public void requestService(String username, String password, final Callback callback) {
@@ -27,13 +26,16 @@ public class ProtocolBuilderAuthenticationService extends BaseProtocolBuilderSer
             executeRequest(post, AuthData.class, new BaseProtocolBuilderService.Callback<AuthData>() {
                 @Override
                 public void onSuccess(AuthData responseBody) {
-                    Log.d("success","big swang");
-                    callback.onSuccess(responseBody.token);
+                    if (responseBody.success) {
+                        callback.onSuccess(responseBody.token);
+                    } else {
+                        callback.onFailure();
+                    }
                 }
 
                 @Override
                 public void onFailure(HttpResponse httpResponse) {
-                    Log.d("success", "big fail");
+                    callback.onFailure();
                 }
             });
         } catch (IOException e) {
