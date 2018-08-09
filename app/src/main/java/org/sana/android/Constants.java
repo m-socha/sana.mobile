@@ -289,7 +289,8 @@ public class Constants {
 
     public static final String PREFERENCE_NOTIFY_TASK_STATUS = "s_notify_task_status";
 
-    public static final String DEFAULT_PROTOCOL_BUILDER_SERVER = "ec2-52-44-252-106.compute-1.amazonaws.com";
+    //public static final String DEFAULT_PROTOCOL_BUILDER_SERVER = "ec2-52-44-252-106.compute-1.amazonaws.com";
+    public static final String DEFAULT_PROTOCOL_BUILDER_SERVER = "192.168.0.19";
 
     /**
      * Calculates the timeout for a given bandwidth. The formula used for

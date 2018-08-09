@@ -12,6 +12,7 @@ import org.sana.android.fragment.PatientListFragment.OnPatientSelectedListener;
 import org.sana.android.provider.Patients;
 import org.sana.android.provider.Procedures;
 import org.sana.android.provider.Subjects;
+import org.sana.android.service.protocol_builder.ProtocolBuilderSyncService;
 import org.sana.android.util.SanaUtil;
 import org.sana.android.widget.ScrollCompleteListener;
 import org.sana.net.Response;
@@ -74,6 +75,8 @@ public class PatientsList extends FragmentActivity implements
     };
     protected ProgressDialog mProgressDialog = null;
 
+    ProtocolBuilderSyncService mProtocolBuilderSyncService = new ProtocolBuilderSyncService();
+
     /**
      * {@inheritDoc}
      */
@@ -84,7 +87,9 @@ public class PatientsList extends FragmentActivity implements
         Locales.updateLocale(this, getString(R.string.force_locale));
         setContentView(R.layout.patient_list_activity);
         // Set the registration disabled by default
-        findViewById(R.id.register).setEnabled(false);
+        //findViewById(R.id.register).setEnabled(false);
+
+        mProtocolBuilderSyncService.requestService(this);
     }
 
     /**

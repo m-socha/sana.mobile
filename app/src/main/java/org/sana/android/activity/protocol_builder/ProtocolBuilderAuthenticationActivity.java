@@ -2,6 +2,7 @@ package org.sana.android.activity.protocol_builder;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -29,6 +30,9 @@ public class ProtocolBuilderAuthenticationActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentViewLocalized(R.layout.activity_protocol_builder_authentication);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         mInputUsername = (EditText) findViewById(R.id.input_username);
         mInputPassword = (EditText) findViewById(R.id.input_password);

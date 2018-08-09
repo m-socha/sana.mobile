@@ -8,12 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import org.sana.R;
 import org.sana.android.service.protocol_builder.ProtocolBuilderProcedureService;
+import org.sana.android.util.SanaUtil;
 import org.sana.core.protocol_builder.Procedure;
 
 import java.text.SimpleDateFormat;
@@ -21,12 +23,22 @@ import java.util.List;
 
 public class ProtocolListActivity extends ListActivity {
 
+    private Button mButtonSelect;
+
     private ProtocolBuilderProcedureService mProcedureService = new ProtocolBuilderProcedureService();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_protocol_list);
+
+        mButtonSelect = (Button) findViewById(R.id.button_select_protocol);
+        mButtonSelect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SanaUtil.createDialog(ProtocolListActivity.this, getString(R.string.pb_protocol_selected), getString(R.string.pb_protocol_selected)).show();
+            }
+        });
 
         mProcedureService.requestService(new ProtocolBuilderProcedureService.Callback() {
             @Override

@@ -1,9 +1,11 @@
 package org.sana.android.service.protocol_builder;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -58,9 +60,15 @@ public abstract class BaseProtocolBuilderService {
                     response.getStatusLine().getStatusCode() <= 299) {
                 try {
                     String responseString = EntityUtils.toString(response.getEntity());
-                    Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
-                    T responseBody = gson.fromJson(responseString, mType);
-                    mCallback.onSuccess(responseBody);
+                    Log.d("RespTest", responseString);
+                    if (mType.equals(new TypeToken<String>() {}.getType())) {
+                        Log.d("EqTest", responseString);
+                        mCallback.onSuccess((T) responseString);
+                    } else {
+                        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
+                        T responseBody = gson.fromJson(responseString, mType);
+                        mCallback.onSuccess(responseBody);
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                     mCallback.onFailure(response);

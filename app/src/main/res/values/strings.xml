@@ -255,5 +255,6 @@
     <string name="pb_select_protocols_title">Select Protocols</string>
     <string name="pb_select_protocols_button">Select</string>
     <string name="pb_last_modified">Last Modified: %1$s</string>
+    <string name="pb_protocol_selected">Protocol Selected</string>
 
 </resources>

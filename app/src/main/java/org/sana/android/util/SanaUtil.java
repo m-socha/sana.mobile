@@ -275,6 +275,39 @@ public class SanaUtil {
         }
     }
 
+    public static void insertProcedure(Context ctx, String procString) {
+        String title = SanaUtil.randomString("Procedure ", 10);
+        String author = "";
+        String guid = "";
+        String version = "1.0";
+
+        try {
+            Procedure p = Procedure.fromXMLString(procString);
+            title = p.getTitle();
+            author = p.getAuthor();
+            guid = p.getGuid();
+            version = p.getVersion();
+
+            ContentValues cv = new ContentValues();
+            cv.put(Procedures.Contract.TITLE, title);
+            cv.put(Procedures.Contract.AUTHOR, author);
+            cv.put(Procedures.Contract.UUID, guid);
+            cv.put(Procedures.Contract.VERSION, version);
+            cv.put(Procedures.Contract.PROCEDURE, procString);
+
+            if (searchDuplicateTitleAuthor(ctx, title, author)) {
+                Log.d(TAG, "Duplicate found!");
+                ctx.getContentResolver().update(Procedures.CONTENT_URI,
+                        cv,
+                        "(title LIKE\"" + title + "\")", null);
+            } else {
+                ctx.getContentResolver().insert(Procedures.CONTENT_URI, cv);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Code to insert procedure into database is a duplicate with
      * insertProcedure this just takes the location from the sd card instead of

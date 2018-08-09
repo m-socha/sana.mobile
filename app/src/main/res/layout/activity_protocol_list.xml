@@ -19,6 +19,7 @@
         android:layout_height="match_parent" />
 
     <Button
+        android:id="@+id/button_select_protocol"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/large_padding"
