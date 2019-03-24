@@ -1,0 +1,85 @@
+/**
+ * Copyright (c) 2013, Sana
+ * All rights reserved.
+ * <p>
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * <p>
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the Sana nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * <p>
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL Sana BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+package org.sana.android.task;
+
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.os.AsyncTask;
+import android.util.Log;
+
+import org.sana.android.net.MDSInterface2;
+
+import java.util.List;
+
+/**
+ * Pulls the procedures of procedure groups.
+ *
+ * @author Sana Development Team
+ */
+public class ProcedureGroupSyncTask extends AsyncTask<List<String>, Void, Integer> {
+    private static final String TAG = ProcedureGroupSyncTask.class.getSimpleName();
+
+    ProgressDialog progressDialog;
+    private Context context;
+
+    public ProcedureGroupSyncTask(Context context) {
+        this.context = context;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+            progressDialog = null;
+        }
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage("Syncing procedure groups");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.show();
+    }
+
+    @Override
+    protected Integer doInBackground(List<String>... params) {
+        Log.i(TAG, "Syncing procedure groups");
+        List<String> procedureGroupIds = params[0];
+        for (String procedureGroupId: procedureGroupIds) {
+            MDSInterface2.syncProcedureGroup(this.context, procedureGroupId);
+        }
+        return 0;
+    }
+
+
+    @Override
+    protected void onPostExecute(Integer result) {
+        Log.i(TAG, "Completed sync of procedure groups");
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+            progressDialog = null;
+        }
+    }
+}
