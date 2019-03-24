@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -38,6 +39,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIUtils;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.BasicCredentialsProvider;
@@ -46,6 +48,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -66,10 +69,13 @@ import org.sana.android.provider.Procedures;
 import org.sana.android.provider.Subjects;
 import org.sana.android.service.QueueManager;
 import org.sana.android.util.Dates;
+import org.sana.api.IProcedure;
 import org.sana.core.Patient;
+import org.sana.core.ProcedureGroup;
 import org.sana.net.MDSResult;
 import org.sana.net.Response;
 import org.sana.net.http.HttpTaskFactory;
+import org.sana.net.http.handler.ProcedureGroupResponseHandler;
 import org.sana.util.UUIDUtil;
 import org.xml.sax.SAXException;
 
@@ -114,7 +120,7 @@ public class MDSInterface2 {
         boolean useSecure = preferences.getBoolean(
                 Constants.PREFERENCE_SECURE_TRANSMISSION, true);
         String scheme = (useSecure) ? "https" : "http";
-        String url = scheme + "://" + host + "/" + root;
+        String url = scheme + "://" + host + "" + root;
         return (TextUtils.isEmpty(path) ? url : url + path);
     }
 
@@ -200,6 +206,21 @@ public class MDSInterface2 {
     protected static MDSResult doPost(String url, HttpEntity entity) {
         HttpPost post = new HttpPost(url);
         post.setEntity(entity);
+        return MDSInterface2.doExecute(post);
+    }
+
+    /**
+     * Executes a POST method with Content-type being application/json. Provides
+     * a wrapper around doExecute by preparing the PostMethod.
+     *
+     * @param url    the request url
+     * @param entity the JSON form data.
+     * @return
+     */
+    protected static MDSResult doPostJson(String url, HttpEntity entity) {
+        HttpPost post = new HttpPost(url);
+        post.setEntity(entity);
+        post.setHeader("Content-type", "application/json");
         return MDSInterface2.doExecute(post);
     }
 
@@ -1352,5 +1373,68 @@ public class MDSInterface2 {
             response.message = Collections.EMPTY_LIST;
         }
         return response;
+    }
+
+    public static List<String> getProcedureXMLsForGroup(Context context, String procedureGroupId,
+                                                        List<String> procedureTitles,
+                                                        List<String> procedureVersions) {
+        Log.i(TAG, "getProcedureXMLsForGroup called");
+        List<String> procedureXMLs = new ArrayList();
+        try {
+            JSONObject procedureList = new JSONObject();
+            for (int i = 0; i < procedureTitles.size(); i++) {
+                procedureList.put(procedureTitles.get(i), procedureVersions.get(i));
+            }
+
+            JSONObject postData = new JSONObject();
+            postData.put("procedures", procedureList);
+            HttpEntity entity = new StringEntity(postData.toString());
+
+            String mdsURL = getMDSUrl(context);
+            String syncURL = mdsURL + "core/proceduregroup/" + procedureGroupId + "/sync/";
+            MDSResult result = MDSInterface2.doPostJson(syncURL, entity);
+
+            JSONObject responseJson = new JSONObject(result.getData());
+
+            JSONArray updatedProceduresJson = responseJson.getJSONArray("updated_procedures");
+            List<String> updatedProcedureXMLs = getXMLsFromSyncResponses(updatedProceduresJson);
+            procedureXMLs.addAll(updatedProcedureXMLs);
+
+            JSONArray newProceduresJson = responseJson.getJSONArray("unknown_procedures");
+            List<String> newProcedureXMLs = getXMLsFromSyncResponses(newProceduresJson);
+            procedureXMLs.addAll(newProcedureXMLs);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return procedureXMLs;
+    }
+
+    private static List<String> getXMLsFromSyncResponses(JSONArray proceduresJson) {
+        List<String> procedureXMLs = new ArrayList();
+        for (int i = 0; i < proceduresJson.length(); i++) {
+            try {
+                JSONObject procedureJson = proceduresJson.getJSONObject(i);
+                String procedureXML = procedureJson.getString("source_file_content");
+                procedureXMLs.add(procedureXML);
+            } catch(JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return procedureXMLs;
+    }
+
+    public static List<ProcedureGroup> getProcedureGroups(Context context) {
+        Log.i(TAG, "getProcedureGroups called");
+        String mdsURL = getMDSUrl(context);
+        Log.i(TAG, "getProcedureGroups called2");
+        URI procedureGroupsURI = URI.create(mdsURL + "core/proceduregroup/");
+        Log.i(TAG, "getProcedureGroups called3");
+        try {
+            Response<Collection<ProcedureGroup>> response = MDSInterface2.apiGet(procedureGroupsURI, new ProcedureGroupResponseHandler());
+            return new ArrayList(response.getMessage());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList();
     }
 }
