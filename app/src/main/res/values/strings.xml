@@ -247,4 +247,7 @@
     <string name="setting_upload_foreground">Notify upload</string>
     <string name="prompt_default">Use default value</string>
 
+    <!-- Procedure Group Strings -->
+    <string name="select_procedure_group_title">Select a Procedure</string>
+
 </resources>
