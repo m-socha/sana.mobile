@@ -84,7 +84,7 @@ public class PatientsList extends FragmentActivity implements
         Locales.updateLocale(this, getString(R.string.force_locale));
         setContentView(R.layout.patient_list_activity);
         // Set the registration disabled by default
-        findViewById(R.id.register).setEnabled(false);
+        findViewById(R.id.register).setEnabled(true);
     }
 
     /**
@@ -99,7 +99,7 @@ public class PatientsList extends FragmentActivity implements
             mFragmentPatientList = (PatientListFragment) fragment;
             mFragmentPatientList.setOnPatientSelectedListener(this);
             mFragmentPatientList.setOnScrollCompleteListener(this);
-            if (mFragmentPatientList.sync(this, Subjects.CONTENT_URI)) {
+            if (mFragmentPatientList.syncPatients(this, Subjects.CONTENT_URI)) {
                 showProgressDialog(getString(R.string.general_synchronizing),
                         getString(R.string.general_fetching_patients));
             }
@@ -149,7 +149,7 @@ public class PatientsList extends FragmentActivity implements
                 return true;
             case R.id.menu_sync_patients:
                 getContentResolver().delete(Subjects.CONTENT_URI, null, null);
-                mFragmentPatientList.syncForced(this, Subjects.CONTENT_URI);
+                mFragmentPatientList.syncPatientsForced(this, Subjects.CONTENT_URI);
                 return true;
             case R.id.menu_delete_patients:
                 getContentResolver().delete(Subjects.CONTENT_URI, null, null);
@@ -318,7 +318,7 @@ public class PatientsList extends FragmentActivity implements
                 break;
             case R.id.sync:
                 getContentResolver().delete(Subjects.CONTENT_URI, null, null);
-                mFragmentPatientList.syncForced(this, Subjects.CONTENT_URI);
+                mFragmentPatientList.syncPatientsForced(this, Subjects.CONTENT_URI);
                 break;
             default:
         }
