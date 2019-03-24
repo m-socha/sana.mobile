@@ -3,11 +3,13 @@ package org.sana.android.activity;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import java.util.ArrayList;
 import java.util.Locale;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.sana.R;
+import org.sana.android.task.ProcedureGroupSyncTask;
 import org.sana.api.IModel;
 import org.sana.net.Response;
 import org.sana.analytics.Runner;
@@ -266,6 +268,8 @@ public class MainActivity extends BaseActivity implements AuthenticationDialogLi
         // This prevents us from relaunching the login on every resume
         dump();
         hideViewsByRole();
+
+        maybeSyncProcedureGroups();
     }
 
     @Override
@@ -819,5 +823,11 @@ public class MainActivity extends BaseActivity implements AuthenticationDialogLi
                     default:
                 }
         }
+    }
+
+    private void maybeSyncProcedureGroups() {
+        ArrayList<String> procedureGroupIds = new ArrayList();
+        ProcedureGroupSyncTask procedureGroupSyncTask = new ProcedureGroupSyncTask(this);
+        procedureGroupSyncTask.execute(procedureGroupIds);
     }
 }
