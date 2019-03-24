@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.sana.R;
+import org.sana.android.task.ProcedureGroupSyncTask;
 import org.sana.api.IModel;
 import org.sana.net.Response;
 import org.sana.analytics.Runner;
@@ -565,9 +566,10 @@ public class MainActivity extends BaseActivity implements AuthenticationDialogLi
         Intent intent = null;
         switch (v.getId()) {
             case R.id.btn_main_select_patient:
-                intent = new Intent(Intent.ACTION_PICK);
-                intent.setDataAndType(Subjects.CONTENT_URI, Subjects.CONTENT_TYPE);
-                startActivityForResult(intent, PICK_PATIENT);
+                //intent = new Intent(Intent.ACTION_PICK);
+                //intent.setDataAndType(Subjects.CONTENT_URI, Subjects.CONTENT_TYPE);
+                //startActivityForResult(intent, PICK_PATIENT);
+                maybeSyncProcedureGroups();
                 break;
             case R.id.btn_main_transfers:
                 intent = new Intent(Intent.ACTION_VIEW);
@@ -819,5 +821,10 @@ public class MainActivity extends BaseActivity implements AuthenticationDialogLi
                     default:
                 }
         }
+    }
+
+    private void maybeSyncProcedureGroups() {
+        ProcedureGroupSyncTask procedureGroupSyncTask = new ProcedureGroupSyncTask(this);
+        procedureGroupSyncTask.execute();
     }
 }
